@@ -18,7 +18,7 @@
         <!-- </thead>
         <tbody>
         <tr>
-            <td> <%= fuel_data[0].user %>  </td>
+            <td>  </td>
             <td> </td>
             <td> </td>
             <td> </td>
@@ -27,13 +27,13 @@
         </tr>
         <tbody> -->
 
-        <% for(var i=0; i < fuel_data.length; i++) { %>
+        <% for(var i=0; i < fuel_data_user.length; i++) { %>
             <tr>
-                <td><%= fuel_data[i].gallonsRequested %></td>
-                <td><%= fuel_data[i].address %></td>
-                <td><%= fuel_data[i].deliveryDate %></td>
-                <td>$<%= fuel_data[i].customerPricePerGallon %></td>
-                <td>$<%= fuel_data[i].totalPrice %></td>
+                <td><%= fuel_data_user[i].gallonsRequested %></td>
+                <td><%= fuel_data_user[i].address %></td>
+                <td><%= fuel_data_user[i].deliveryDate %></td>
+                <td>$<%= fuel_data_user[i].customerPricePerGallon %></td>
+                <td>$<%= fuel_data_user[i].totalPrice %></td>
             </tr>
         <% } %>
 

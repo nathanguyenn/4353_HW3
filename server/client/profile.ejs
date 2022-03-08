@@ -17,13 +17,12 @@
       <label for="username"><b>Username</b></label>
       <input
         type="text"
-        placeholder="<%= username  %> "
+        placeholder="<%= email  %> "
         name="username"
-        value="<%= username  %> "
+        value="<%= email  %> "
         readonly
       />
 
-      <label for="password"><b>Password</b></label>
       <input
         type="hidden"
         placeholder="<%= password  %> "
@@ -35,7 +34,7 @@
       <label for="name"><b>Full Name</b></label>
       <input
         type="text"
-        placeholder="Enter Full Name"
+        placeholder="<%= name %> "
         name="name"
         maxlength="50"
         required
@@ -44,7 +43,7 @@
       <label for="ad1"><b>Address 1:</b></label>
       <input
         type="text"
-        placeholder="Enter Address 1:"
+        placeholder="<%= street %> "
         name="ad1"
         maxlength="100"
         required
@@ -61,7 +60,7 @@
       <label for="city"><b>City</b></label>
       <input
         type="text"
-        placeholder="City:"
+        placeholder="<%= city %> "
         name="city"
         maxlength="100"
         required
@@ -82,7 +81,7 @@
       <label for="zip"><b>Zip code:</b></label>
       <input
         type="text"
-        placeholder="Zip code:"
+        placeholder="<%= zip %> "
         name="zip"
         maxlength="9"
         minlength="5"
