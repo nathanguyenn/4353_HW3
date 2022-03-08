@@ -1,0 +1,26 @@
+[
+  {
+    "user": "user@gmail.com",
+    "state": "TX",
+    "gallonsRequested": 100,
+    "internalPricePerGallon": 1.99,
+    "internalCost": 199.0,
+    "profit": 1515.0,
+    "customerPricePerGallon": 5.0,
+    "totalPrice": 54710.0,
+    "deliveryDate": "March 10th 2022",
+    "address": "1234 drive Houston TX 70708"
+  },
+  {
+    "user": "user2@gmail.com",
+    "state": "TX",
+    "gallonsRequested": 100,
+    "internalPricePerGallon": 1.99,
+    "internalCost": 199.0,
+    "profit": 1515.0,
+    "customerPricePerGallon": 5.0,
+    "totalPrice": 54710.0,
+    "deliveryDate": "March 10th 2022",
+    "address": "5678 drive Houston TX 10000"
+  }
+]

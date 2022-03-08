@@ -1,0 +1,46 @@
+<head>
+    <title>Fuel Quote History</title>
+    <link rel="stylesheet" href="./css/history.css">
+    <script src="https://kit.fontawesome.com/7890dbf088.js" crossorigin="anonymous"></script>
+</head>
+<body>
+    <h1>Fuel Quote History<i onclick="location.href='/profile'" class='far fa-user-circle'></i></h1>
+<div class="table-wrapper">
+    <table class="fl-table">
+        <thead>
+        <tr>
+            <th>Gallons Requested</th>
+            <th>Delivery Address</th>
+            <th>Delivery Date</th>
+            <th>Suggested Price / gallon</th>
+            <th>Total Amount Due</th>
+        </tr>
+        <!-- </thead>
+        <tbody>
+        <tr>
+            <td> <%= fuel_data[0].user %>  </td>
+            <td> </td>
+            <td> </td>
+            <td> </td>
+            <td> </td>
+        </tr>
+        </tr>
+        <tbody> -->
+
+        <% for(var i=0; i < fuel_data.length; i++) { %>
+            <tr>
+                <td><%= fuel_data[i].gallonsRequested %></td>
+                <td><%= fuel_data[i].address %></td>
+                <td><%= fuel_data[i].deliveryDate %></td>
+                <td>$<%= fuel_data[i].customerPricePerGallon %></td>
+                <td>$<%= fuel_data[i].totalPrice %></td>
+            </tr>
+        <% } %>
+
+    </table>
+
+</div>
+    <div class="clearfix">
+        <button type="button" class="cancelbtn" onclick="location.href='/fuelQuoteForm'">Go Back</button>
+    </div>
+</body>
