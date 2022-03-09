@@ -3,7 +3,7 @@ const util = require("util");
 
 const readFile = util.promisify(fs.readFile);
 const writeFile = util.promisify(fs.writeFile);
-
+const modifyFile = util.promisify(fs.readFile);
 class userService {
   constructor(datafile) {
     this.datafile = datafile;
@@ -24,11 +24,31 @@ class userService {
     return JSON.parse(data);
   }
 
-  async addEntry(email, password, address, name) {
+  async modifyEntry(email, name, address, password) {
     const data = (await this.getData()) || [];
-    data.unshift({ email, password, address, name });
-    return writeFile(this.datafile, JSON.stringify(data));
+    //const hold = await this.getList();
+    let match = false;
+    for (let user of data) {
+      if (user.email === email) {
+        console.log("MATCHING EMAIL");
+        user.name = name;
+        user.address = address;
+        match = true;
+      }
+    }
+    if (match) {
+      writeFile(this.datafile, "");
+      writeFile(this.datafile, JSON.stringify(data));
+    } else {
+      data.unshift({ email, password, address, name });
+      writeFile(this.datafile, JSON.stringify(data));
+    }
   }
+  // async addEntry(email, password, address, name) {
+  //   const data = (await this.getData()) || [];
+  //   data.unshift({ email, password, address, name });
+  //   return writeFile(this.datafile, JSON.stringify(data));
+  // }
 }
 
 module.exports = userService;

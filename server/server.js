@@ -15,16 +15,18 @@ const UserService = new userService("./data/users.json");
 const FuelQuoteService = new fuelQuoteService("./data/fuelQuotes.json");
 
 let current_user = "";
+{
+  app.use(bodyParser.json());
+  app.use(
+    bodyParser.urlencoded({
+      // to support URL-encoded bodies
+      extended: true,
+    })
+  );
+  app.use(cors());
+  app.use(express.static(path.join(__dirname, "./client")));
+}
 
-app.use(bodyParser.json());
-app.use(
-  bodyParser.urlencoded({
-    // to support URL-encoded bodies
-    extended: true,
-  })
-);
-app.use(cors());
-app.use(express.static(path.join(__dirname, "./client")));
 // check if server works
 {
   app.get("/", (req, res) => {
@@ -46,20 +48,32 @@ app.use(express.static(path.join(__dirname, "./client")));
     res.render("index");
   });
 
-  //Route that handles login logic
-  app.post("/fuelQuoteForm", (req, res) => {
+  app.post("/fuelQuoteForm", async (req, res) => {
     console.log("going to fuelquoteform with nodejs - post");
     const gallonsRequested = req.body.galReq;
     const address = req.body.delivAdd;
     const deliveryDate = req.body.delivDate;
-    FuelQuoteService.addEntry(
+    let result = await FuelQuoteService.addEntry(
       current_user.email,
       gallonsRequested,
       address,
       deliveryDate
     );
-    //res.render("fuelQuoteForm");
-    res.redirect("history");
+
+    let customerPricePerGallon = parseFloat(
+      result.customerPricePerGallon
+    ).toFixed(2);
+    //let customerPricePerGallon = result.customerPricePerGallon;
+    let totalPrice = parseFloat(result.totalPrice).toFixed(2);
+    //let totalPrice = result.totalPrice;
+    res.render("fuelQuoteForm", {
+      gallonsRequested,
+      current_user,
+      customerPricePerGallon,
+      totalPrice,
+      deliveryDate,
+    });
+    //res.redirect("history");
   });
 
   app.get("/fuelQuoteForm", (req, res) => {
@@ -70,7 +84,17 @@ app.use(express.static(path.join(__dirname, "./client")));
         " and address is " +
         current_user.address
     );
-    res.render("fuelQuoteForm", { current_user });
+    let customerPricePerGallon = parseFloat(0).toFixed(2);
+    let totalPrice = parseFloat(0).toFixed(2);
+    const deliveryDate = "0000-00-00";
+    let gallonsRequested = "Enter Requested Gallons";
+    res.render("fuelQuoteForm", {
+      gallonsRequested,
+      current_user,
+      customerPricePerGallon,
+      totalPrice,
+      deliveryDate,
+    });
   });
 
   app.get("/signup", (req, res) => {
@@ -86,12 +110,6 @@ app.use(express.static(path.join(__dirname, "./client")));
     //current_user = { email, password };
     let string = encodeURIComponent(email + "|" + password);
     res.redirect("profile?valid=" + string);
-  });
-
-  app.post("/history", async (req, res) => {
-    console.log("going to history with nodejs - post");
-    const fuel_data = await FuelQuoteService.getList();
-    res.render("history", { fuel_data });
   });
 
   app.get("/history", async (req, res) => {
@@ -161,21 +179,14 @@ app.use(express.static(path.join(__dirname, "./client")));
     let email = req.body.username;
     let password = req.body.password;
 
-    console.log(`concatenated address is ${address}`);
-
-    await UserService.addEntry(email, password, address, name);
+    await UserService.modifyEntry(email, name, address, password);
+    // await UserService.addEntry(email, password, address, name);
     let user_data = await UserService.getList();
     for (let user of user_data) {
       if (user.email === email) {
-        console.log(
-          `matching email, from the queue, address is - ${user.address}`
-        );
         current_user = user;
       }
     }
-    console.log(
-      `inside profile post method, current_user pw is ${current_user.password}`
-    );
     res.redirect("fuelQuoteForm");
   });
 }

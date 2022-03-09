@@ -13,23 +13,23 @@
     
         <label for="galReq"><b>Gallons Requested</b></label>
         <br><br>
-        <input type="number" step="0.01" placeholder="Enter Requested Gallons" name="galReq" required>
+        <input type="number" step="0.01" placeholder="<%=gallonsRequested %>" name="galReq" required>
         <br><br>
         <label for="delivAdd"><b>Delivery Address</b></label>
-        <input type="text" value="<%= current_user.address %>" placeholder="<%= current_user.address %>" name="delivAdd">
+        <input type="text" value="<%= current_user.address %>" placeholder="<%= current_user.address %>" name="delivAdd" readonly>
 
         <label for="delivDate"><b>Delivery Date</b></label>
         <br> <br> 
-        <input type ="date" placeholder="Enter Full Name" name="delivDate" required>
+        <input type ="date" value="<%=deliveryDate%>" name="delivDate" required>
         <br>  <br> 
         <p>If address is incorrect please fix on <a href="/profile" style="color:dodgerblue">User Profile</a>.</p>
 
             <br> <br> 
         <label for="suggestedPrice"><b>Suggested Price / gallon:</b></label>
-        <input type="text" placeholder="( Price from Pricing Module )" name="suggestedPrice" readonly>
+        <input type="text" placeholder="$<%= customerPricePerGallon %>" name="suggestedPrice" readonly>
 
         <label for="totalAmntDue"><b>Total Amount Due</b></label>
-        <input type="text" placeholder="Please Enter Requested Gallons For Calculations" name="totalAmntDue" readonly>
+        <input type="text" placeholder="$<%= totalPrice %>" name="totalAmntDue" readonly>
     
         <div class="clearfix">
             <button type="button" class="cancelbtn" onclick="location.href='/history'">Fuel Quote History</button>

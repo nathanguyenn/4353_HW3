@@ -48,7 +48,12 @@ class fuelQuoteService {
       deliveryDate,
       address,
     });
-    return writeFile(this.datafile, JSON.stringify(data));
+    writeFile(this.datafile, JSON.stringify(data));
+    let obj = {
+      customerPricePerGallon: customerPricePerGallon,
+      totalPrice: totalPrice,
+    };
+    return obj;
   }
 }
 

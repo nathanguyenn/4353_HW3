@@ -32,8 +32,8 @@
                 <td><%= fuel_data_user[i].gallonsRequested %></td>
                 <td><%= fuel_data_user[i].address %></td>
                 <td><%= fuel_data_user[i].deliveryDate %></td>
-                <td>$<%= fuel_data_user[i].customerPricePerGallon %></td>
-                <td>$<%= fuel_data_user[i].totalPrice %></td>
+                <td>$<%= parseFloat(fuel_data_user[i].customerPricePerGallon).toFixed(2) %></td>
+                <td>$<%= parseFloat(fuel_data_user[i].totalPrice).toFixed(2) %></td>
             </tr>
         <% } %>
 
