@@ -10,7 +10,9 @@
 <body>
   <form action="/profile" style="border: 1px solid #ccc" method="post">
     <div class="container">
-      <h1>User Profile<i class="fa-solid fa-user-pen"></i></h1>
+      <h1>
+        User Profile<i class="fa-solid fa-user-lock" onclick="logout()"></i>
+      </h1>
 
       <hr />
 
@@ -100,4 +102,12 @@
       </div>
     </div>
   </form>
+  <script>
+    function logout() {
+      let result = confirm("Are you sure you want to logout?");
+      if (result) {
+        location.href = "/";
+      }
+    }
+  </script>
 </body>

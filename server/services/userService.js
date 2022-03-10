@@ -24,7 +24,7 @@ class userService {
     return JSON.parse(data);
   }
 
-  async modifyEntry(email, name, address, password) {
+  async modifyEntry(email, name, street, password, city, state, zip) {
     const data = (await this.getData()) || [];
     //const hold = await this.getList();
     let match = false;
@@ -32,23 +32,22 @@ class userService {
       if (user.email === email) {
         console.log("MATCHING EMAIL");
         user.name = name;
-        user.address = address;
-        match = true;
+        user.street = street;
+        user.city = city;
+        user.state = state;
+        user.zip = zip;
+        await writeFile(this.datafile, "");
+        await writeFile(this.datafile, JSON.stringify(data));
+        return;
       }
     }
-    if (match) {
-      writeFile(this.datafile, "");
-      writeFile(this.datafile, JSON.stringify(data));
-    } else {
-      data.unshift({ email, password, address, name });
-      writeFile(this.datafile, JSON.stringify(data));
-    }
+    data.unshift({ email, name, street, password, city, state, zip });
+    await writeFile(this.datafile, JSON.stringify(data));
   }
-  // async addEntry(email, password, address, name) {
+  // async addEntry(email, name, street, password, city, state, zip) {
   //   const data = (await this.getData()) || [];
-  //   data.unshift({ email, password, address, name });
+  //   data.unshift({ email, name, street, password, city, state, zip });
   //   return writeFile(this.datafile, JSON.stringify(data));
   // }
 }
-
 module.exports = userService;

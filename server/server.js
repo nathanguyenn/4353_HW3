@@ -39,12 +39,20 @@ let current_user = "";
     const email = req.body.uname;
     const password = req.body.psw;
     for (let user of user_data) {
-      if (user.email === email && user.password === password) {
-        current_user = user;
-        res.redirect("fuelQuoteForm");
+      if (user.email === email) {
+        if (user.password === password) {
+          current_user = user;
+          res.redirect("fuelQuoteForm");
+          return;
+        }
+        console.log(
+          'Incorrect password. Please try again.\n\n\'Need help? Click on "Forgot password"'
+        );
+        res.render("index");
         return;
       }
     }
+    console.log("Email not found. Please use a different email or try again.");
     res.render("index");
   });
 
@@ -78,12 +86,8 @@ let current_user = "";
 
   app.get("/fuelQuoteForm", (req, res) => {
     console.log("going to fuelquoteform with nodejs - get");
-    console.log(
-      "current user email is - " +
-        current_user.email +
-        " and address is " +
-        current_user.address
-    );
+    console.log("current user email is - " + current_user.email);
+    console.log(current_user.street);
     let customerPricePerGallon = parseFloat(0).toFixed(2);
     let totalPrice = parseFloat(0).toFixed(2);
     const deliveryDate = "0000-00-00";
@@ -151,11 +155,11 @@ let current_user = "";
       const email = current_user.email;
       const password = current_user.password;
       let name = current_user.name;
-      let address = current_user.address.split(" ");
-      let street = address[0] + " " + address[1];
-      let city = address[2];
-      let state = address[3];
-      let zip = address[4];
+      let street = current_user.street;
+      let city = current_user.city;
+      let state = current_user.state;
+      let zip = current_user.zip;
+
       res.render("profile", {
         email,
         password,
@@ -171,20 +175,33 @@ let current_user = "";
   app.post("/profile", async (req, res) => {
     console.log("going to profile with nodejs - post");
     let street = req.body.ad1;
+    if (req.body.ad2) street = street + " " + req.body.ad2;
     let city = req.body.city;
     let state = req.body.state;
     let zip = req.body.zip;
-    let address = `${street} ${city} ${state} ${zip}`;
     let name = req.body.name;
     let email = req.body.username;
     let password = req.body.password;
 
-    await UserService.modifyEntry(email, name, address, password);
-    // await UserService.addEntry(email, password, address, name);
-    let user_data = await UserService.getList();
+    await UserService.modifyEntry(
+      email,
+      name,
+      street,
+      password,
+      city,
+      state,
+      zip
+    );
+    // await UserService.addEntry(email, name, street, password,
+    //                            city, state, zip);
+    const user_data = await UserService.getList();
     for (let user of user_data) {
       if (user.email === email) {
+        current_user = null;
+        console.log("I was set to null");
         current_user = user;
+      } else {
+        console.log("Email not found");
       }
     }
     res.redirect("fuelQuoteForm");

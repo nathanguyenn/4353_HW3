@@ -42,6 +42,12 @@ h1 {
 i {
   float: right;
 }
+i:hover {
+  opacity: 80%;
+  color: #cf2323;
+  transition-duration: 0.5s;
+  cursor: pointer;
+}
 
 hr {
   border: 1px solid #f1f1f1;
