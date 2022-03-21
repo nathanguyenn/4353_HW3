@@ -13,3 +13,5 @@ The backend dummy value is inside the data/users.json file. If you launch on loc
 inside the users.json file. 
 Another way to know is when you either log in or create a new account, after you have done that, go to the user icon in the top right
 there is a feild to show that your current logged in username is displayed.
+
+We also uses Mocha, Chai, and Supertest to create unit tests and do the code coverage report. 
