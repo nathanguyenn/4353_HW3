@@ -1,3 +1,5 @@
+NOTE: MUST install nodejs, express and mysql to run this project
+
 This is an updated version of our app for 4353 prof. Singh. 
 
 It uses expressjs and nodejs to power our static front end (html css js). 
