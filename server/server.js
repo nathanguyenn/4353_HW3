@@ -4,16 +4,21 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 const port = 3000;
 const path = require("path");
-const con = require("./services/database");
-
+const db = require("./services/database");
+const util = require("util");
+// NOTE: everytime you want to do a SQL querie,
+// do db.query, example are shown in database.js
+// and by the line app.get('/' ___) file
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "./client"));
 
 const userService = require("./services/userService");
 const fuelQuoteService = require("./services/fuelQuoteService");
+const { render } = require("ejs");
 
 const UserService = new userService("./data/users.json");
 const FuelQuoteService = new fuelQuoteService("./data/fuelQuotes.json");
+db.query = util.promisify(db.query);
 
 let current_user = "";
 {
@@ -31,30 +36,52 @@ let current_user = "";
 // check if server works
 {
   app.get("/", (req, res) => {
+    // db.query("SELECT * FROM fuelQuotes", function (err, result) {
+    //   if (err) throw err;
+    //   console.log(result[0].user);
+    // });
     res.render("index");
   });
 
   app.post("/", async (req, res) => {
-    //res.sendFile(path.join(__dirname, "../client/index.html"));
-    const user_data = await UserService.getList();
+    //const user_data = await UserService.getList();
     const email = req.body.uname;
     const password = req.body.psw;
-    for (let user of user_data) {
-      if (user.email === email) {
-        if (user.password === password) {
-          current_user = user;
-          res.redirect("fuelQuoteForm");
-          return;
+    let login_email = "";
+    let info = [email, password];
+    db.query(
+      "SELECT * FROM customers WHERE email = ? AND password =? ",
+      info,
+      function (err, result) {
+        if (err) throw err;
+        if (result) {
+          login_email = email;
+          db.query(
+            "SELECT * FROM customer_info WHERE username = ?",
+            login_email,
+            function (err, result) {
+              if (err) throw err;
+              if (result) {
+                current_user = {
+                  email: result[0].username,
+                  name: result[0].name,
+                  street: result[0].street,
+                  city: result[0].city,
+                  state: result[0].state,
+                  zip: result[0].zip,
+                };
+                console.log(current_user);
+                res.redirect("fuelQuoteForm");
+              } else {
+                console.log("result not found");
+              }
+            }
+          );
+        } else {
+          res.render("index");
         }
-        console.log(
-          'Incorrect password. Please try again.\n\n\'Need help? Click on "Forgot password"'
-        );
-        res.render("index");
-        return;
       }
-    }
-    console.log("Email not found. Please use a different email or try again.");
-    res.render("index");
+    );
   });
 
   app.post("/fuelQuoteForm", async (req, res) => {
@@ -119,14 +146,17 @@ let current_user = "";
 
   app.get("/history", async (req, res) => {
     console.log("going to history with nodejs - get");
-    const fuel_data = await FuelQuoteService.getList();
-    const fuel_data_user = [];
-    for (let quote of fuel_data) {
-      if (quote.user === current_user.email) {
-        fuel_data_user.push(quote);
+    db.query(
+      "SELECT * FROM fuelQuotes WHERE user = ?",
+      current_user.email,
+      function (err, result) {
+        const fuel_data_user = [];
+        for (let quote of result) {
+          fuel_data_user.push(quote);
+        }
+        res.render("history", { fuel_data_user });
       }
-    }
-    res.render("history", { fuel_data_user });
+    );
   });
 
   app.get("/profile", (req, res) => {
