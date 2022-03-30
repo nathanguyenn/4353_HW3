@@ -1,3 +1,5 @@
+NOTE: MUST install nodejs, express and mysql to run this project
+
 This is an updated version of our app for 4353 prof. Singh. 
 
 It uses expressjs and nodejs to power our static front end (html css js). 
@@ -13,3 +15,5 @@ The backend dummy value is inside the data/users.json file. If you launch on loc
 inside the users.json file. 
 Another way to know is when you either log in or create a new account, after you have done that, go to the user icon in the top right
 there is a feild to show that your current logged in username is displayed.
+
+We also uses Mocha, Chai, and Supertest to create unit tests and do the code coverage report. 

@@ -4,6 +4,7 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 const port = 3000;
 const path = require("path");
+const con = require("./services/database");
 
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "./client"));
