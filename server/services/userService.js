@@ -1,5 +1,7 @@
 const fs = require("fs");
 const util = require("util");
+const db = require("./database");
+db.query = util.promisify(db.query);
 
 const readFile = util.promisify(fs.readFile);
 const writeFile = util.promisify(fs.writeFile);
@@ -41,18 +43,11 @@ class userService {
         user.city = city;
         user.state = state;
         user.zip = zip;
-        let info = [email, name, street, city, state, zip];
         let info2 = [name, street, city, state, zip, email];
         var sql = "";
-        if (myNew) {
+        if (myNew == false) {
           sql =
-            "INSERT INTO customers_info (username, name, street, city, state, zip) VALUES (?)";
-          db.query(sql, [info], function (err, result) {
-            if (err) throw err;
-          });
-        } else {
-          sql =
-            "UPDATE cusomters_info SET name = ?, street = ?, city = ?, state = ?, zip = ? WHERE username = ?";
+            "UPDATE customer_info SET name = ?, street = ?, city = ?, state = ?, zip = ? WHERE username = ?";
           db.query(sql, [info2], function (err, result) {
             if (err) throw err;
           });
@@ -60,8 +55,13 @@ class userService {
         return;
       }
     }
-    data.unshift({ email, name, street, password, city, state, zip });
-    await writeFile(this.datafile, JSON.stringify(data));
+    let info = [email, name, street, city, state, zip];
+    var sql = "";
+    sql =
+      "INSERT INTO customer_info (username, name, street, city, state, zip) VALUES (?)";
+    db.query(sql, [info], function (err, result) {
+      if (err) throw err;
+    });
   }
   // async addEntry(email, name, street, password, city, state, zip) {
   //   const data = (await this.getData()) || [];
