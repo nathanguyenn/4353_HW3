@@ -234,16 +234,26 @@ let current_user = "";
     );
     // await UserService.addEntry(email, name, street, password,
     //                            city, state, zip);
-    const user_data = await UserService.getList();
-    for (let user of user_data) {
-      if (user.email === email) {
-        current_user = null;
-        console.log("I was set to null");
-        current_user = user;
-      } else {
-        console.log("Email not found");
+    db.query(
+      "SELECT * FROM customer_info WHERE username = ?",
+      [email],
+      function (err, result, fields) {
+        if (err) throw err;
+        if (result) {
+          console.log("im in result");
+          current_user = {
+            email: result[0].username,
+            name: result[0].name,
+            street: result[0].street,
+            city: result[0].city,
+            state: result[0].state,
+            zip: result[0].zip,
+          };
+          console.log("in result and " + current_user.email);
+        }
       }
-    }
+    );
+    console.log(current_user.email);
     res.redirect("fuelQuoteForm");
   });
 }

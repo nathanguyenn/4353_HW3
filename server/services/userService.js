@@ -16,8 +16,11 @@ class userService {
    * Get all feedback items
    */
   async getList() {
-    const data = await this.getData();
-    return data;
+    db.query("SELECT * FROM customers", function (err, result) {
+      if (err) throw err;
+
+      return result;
+    });
   }
   /**
    * Fetches feedback data from the JSON file provided to the constructor
@@ -29,45 +32,33 @@ class userService {
   }
 
   async modifyEntry(email, name, street, password, city, state, zip) {
-    const data = (await this.getData()) || [];
     //const hold = await this.getList();
-    let match = false;
-    let myNew = false;
-    let info = [email, name, street, city, state, zip];
-    let info2 = [name, street, city, state, zip, email];
+
     var sql = "";
-    for (let user of data) {
-      if (user.email === email) {
+
+    db.query(
+      "SELECT * FROM customers WHERE email = ?",
+      [email],
+      function (err, result) {
+        if (err) throw err;
         console.log("MATCHING EMAIL");
-        if (user.name === undefined && user.name === null) {
-          myNew = true;
-        }
-        user.name = name;
-        user.street = street;
-        user.city = city;
-        user.state = state;
-        user.zip = zip;
-        if (myNew) {
-          sql =
-            "INSERT INTO customer_info (username, name, street, city, state, zip) VALUES (?)";
-          db.query(sql, [info], function (err, result) {
-            if (err) throw err;
-          });
-        } else {
+        if (result) {
+          let info2 = [name, street, city, state, zip, email];
           sql =
             "UPDATE customer_info SET name = ?, street = ?, city = ?, state = ?, zip = ? WHERE username = ?";
           db.query(sql, [info2], function (err, result) {
             if (err) throw err;
           });
+        } else {
+          let info = [email, name, street, city, state, zip];
+          sql =
+            "INSERT INTO customer_info (username, name, street, city, state, zip) VALUES (?)";
+          db.query(sql, [info], function (err, result) {
+            if (err) throw err;
+          });
         }
-        return;
       }
-    }
-    sql =
-      "INSERT INTO customer_info (username, name, street, city, state, zip) VALUES (?)";
-    db.query(sql, [info], function (err, result) {
-      if (err) throw err;
-    });
+    );
   }
   // async addEntry(email, name, street, password, city, state, zip) {
   //   const data = (await this.getData()) || [];
