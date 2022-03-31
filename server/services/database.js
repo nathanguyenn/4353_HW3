@@ -12,11 +12,11 @@ connection.connect(function (err) {
     return console.error("error: " + err.message);
   }
 
-  // console.log("Connected to the MySQL server.");
-  // connection.query("SELECT * FROM customers", function (err, result, fields) {
-  //   if (err) throw err;
-  //   console.log(result);
-  // });
+  console.log("Connected to the MySQL server.");
+  connection.query("SELECT * FROM customers", function (err, result, fields) {
+    if (err) throw err;
+    console.log(result);
+  });
   // connection.query("SELECT * FROM fuelQuotes", function (err, result, fields) {
   //   if (err) throw err;
   //   console.log(result);

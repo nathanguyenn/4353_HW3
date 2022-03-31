@@ -6,6 +6,8 @@ const port = 3000;
 const path = require("path");
 const db = require("./services/database");
 const util = require("util");
+const bcrypt = require("bcrypt");
+const saltRounds = 10;
 // NOTE: everytime you want to do a SQL querie,
 // do db.query, example are shown in database.js
 // and by the line app.get('/' ___) file
@@ -47,8 +49,9 @@ let current_user = "";
     //const user_data = await UserService.getList();
     const email = req.body.uname;
     const password = req.body.psw;
+    const encryptedPassword = await bcrypt.hash(password, saltRounds);
     let login_email = "";
-    let info = [email, password];
+    let info = [email, encryptedPassword];
     db.query(
       "SELECT * FROM customers WHERE email = ? AND password =? ",
       info,
@@ -139,8 +142,14 @@ let current_user = "";
 
     const email = req.body.email;
     const password = req.body.psw;
+    const encryptedPassword = bcrypt.hash(password, saltRounds);
+    let info = [email, encryptedPassword];
     //current_user = { email, password };
     let string = encodeURIComponent(email + "|" + password);
+    var sql = "INSERT INTO customers (email, password) VALUES (?, ?)";
+    db.query(sql, [info], function (err, result) {
+      if (err) throw err;
+    });
     res.redirect("profile?valid=" + string);
   });
 
