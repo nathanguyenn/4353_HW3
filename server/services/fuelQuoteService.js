@@ -4,6 +4,8 @@ const priceModule = require("./priceModule");
 
 const readFile = util.promisify(fs.readFile);
 const writeFile = util.promisify(fs.writeFile);
+const db = require("./database");
+db.query = util.promisify(db.query);
 
 class fuelQuoteService {
   constructor(datafile) {
@@ -36,9 +38,10 @@ class fuelQuoteService {
     let customerPricePerGallon = pricing.customerPricePerGallon;
     let totalPrice = pricing.totalPrice;
 
-    data.unshift({
+    var sql =
+      "INSERT INTO fuelQuotes (user, gallons_requested, internal_price_per_gallon, internal_cost, profit, customer_price_per_gallon, total_price, delivery_date, address) VALUES (?)";
+    var info = [
       user,
-      state_PLACEHOLDER,
       gallonsRequested,
       internalPricePerGallon,
       internalCost,
@@ -47,8 +50,11 @@ class fuelQuoteService {
       totalPrice,
       deliveryDate,
       address,
+    ];
+    db.query(sql, [info], function (err, result) {
+      if (err) throw err;
     });
-    writeFile(this.datafile, JSON.stringify(data));
+
     let obj = {
       customerPricePerGallon: customerPricePerGallon,
       totalPrice: totalPrice,
