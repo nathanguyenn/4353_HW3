@@ -28,16 +28,35 @@ class userService {
     const data = (await this.getData()) || [];
     //const hold = await this.getList();
     let match = false;
+    console.log("INSIDE MODIFYENTRY");
+    let myNew = false;
     for (let user of data) {
       if (user.email === email) {
         console.log("MATCHING EMAIL");
+        if (user.name === undefined && user.name === null) {
+          myNew = true;
+        }
         user.name = name;
         user.street = street;
         user.city = city;
         user.state = state;
         user.zip = zip;
-        await writeFile(this.datafile, "");
-        await writeFile(this.datafile, JSON.stringify(data));
+        let info = [email, name, street, city, state, zip];
+        let info2 = [name, street, city, state, zip, email];
+        var sql = "";
+        if (myNew) {
+          sql =
+            "INSERT INTO customers_info (username, name, street, city, state, zip) VALUES (?)";
+          db.query(sql, [info], function (err, result) {
+            if (err) throw err;
+          });
+        } else {
+          sql =
+            "UPDATE cusomters_info SET name = ?, street = ?, city = ?, state = ?, zip = ? WHERE username = ?";
+          db.query(sql, [info2], function (err, result) {
+            if (err) throw err;
+          });
+        }
         return;
       }
     }

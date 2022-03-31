@@ -137,16 +137,16 @@ let current_user = "";
     res.render("signup");
   });
 
-  app.post("/signup", (req, res) => {
+  app.post("/signup", async (req, res) => {
     console.log("going to signup with nodejs - post");
 
     const email = req.body.email;
     const password = req.body.psw;
-    const encryptedPassword = bcrypt.hash(password, saltRounds);
+    const encryptedPassword = await bcrypt.hash(password, saltRounds);
     let info = [email, encryptedPassword];
     //current_user = { email, password };
     let string = encodeURIComponent(email + "|" + password);
-    var sql = "INSERT INTO customers (email, password) VALUES (?, ?)";
+    var sql = "INSERT INTO customers (email, password) VALUES (?)";
     db.query(sql, [info], function (err, result) {
       if (err) throw err;
     });
