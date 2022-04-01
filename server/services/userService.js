@@ -1,3 +1,4 @@
+const e = require("express");
 const fs = require("fs");
 const util = require("util");
 
@@ -35,27 +36,30 @@ class userService {
     //const hold = await this.getList();
 
     var sql = "";
-
+    let info2 = [name, street, city, state, zip, email];
+    let info = [email, name, street, city, state, zip];
     db.query(
       "SELECT * FROM customers WHERE email = ?",
-      [email],
+      email,
       function (err, result) {
         if (err) throw err;
-        console.log("MATCHING EMAIL");
         if (result) {
-          let info2 = [name, street, city, state, zip, email];
-          sql =
-            "UPDATE customer_info SET name = ?, street = ?, city = ?, state = ?, zip = ? WHERE username = ?";
-          db.query(sql, [info2], function (err, result) {
-            if (err) throw err;
-          });
-        } else {
-          let info = [email, name, street, city, state, zip];
+          // sql =
+          //   "UPDATE customer_info SET name = ?, street = ?, city = ?, state = ?, zip = ? WHERE username = ?";
+          // db.query(sql, [info2], function (err, result) {
+          //   if (err) throw err;
+          // });
           sql =
             "INSERT INTO customer_info (username, name, street, city, state, zip) VALUES (?)";
           db.query(sql, [info], function (err, result) {
             if (err) throw err;
           });
+          // } else {
+          //   sql =
+          //     "INSERT INTO customer_info (username, name, street, city, state, zip) VALUES (?)";
+          //   db.query(sql, [info], function (err, result) {
+          //     if (err) throw err;
+          //   });
         }
       }
     );

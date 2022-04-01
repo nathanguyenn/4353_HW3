@@ -49,12 +49,11 @@ let current_user = "";
     //const user_data = await UserService.getList();
     const email = req.body.uname;
     const password = req.body.psw;
-    const encryptedPassword = await bcrypt.hash(password, saltRounds);
     let login_email = "";
-    let info = [email, encryptedPassword];
+    let info = [email, password];
     db.query(
-      "SELECT * FROM customers WHERE email = ? AND password =? ",
-      info,
+      "SELECT * FROM customers WHERE email = ?",
+      email,
       function (err, result) {
         if (err) throw err;
         if (result) {
@@ -235,26 +234,36 @@ let current_user = "";
     // await UserService.addEntry(email, name, street, password,
     //                            city, state, zip);
     db.query(
-      "SELECT * FROM customer_info WHERE username = ?",
-      [email],
-      function (err, result, fields) {
+      "SELECT * FROM customers WHERE email = ?",
+      email,
+      function (err, result) {
         if (err) throw err;
         if (result) {
-          console.log("im in result");
-          current_user = {
-            email: result[0].username,
-            name: result[0].name,
-            street: result[0].street,
-            city: result[0].city,
-            state: result[0].state,
-            zip: result[0].zip,
-          };
-          console.log("in result and " + current_user.email);
+          login_email = email;
+          db.query(
+            "SELECT * FROM customer_info WHERE username = ?",
+            login_email,
+            function (err, result) {
+              if (err) throw err;
+              if (result) {
+                current_user = {
+                  email: result[0].username,
+                  name: result[0].name,
+                  street: result[0].street,
+                  city: result[0].city,
+                  state: result[0].state,
+                  zip: result[0].zip,
+                };
+                console.log(current_user);
+                res.redirect("fuelQuoteForm");
+              } else {
+                console.log("result not found");
+              }
+            }
+          );
         }
       }
     );
-    console.log(current_user.email);
-    res.redirect("fuelQuoteForm");
   });
 }
 

@@ -28,7 +28,6 @@ class fuelQuoteService {
   }
 
   async addEntry(user, gallonsRequested, address, deliveryDate) {
-    const data = (await this.getData()) || [];
     const state_PLACEHOLDER = "TX";
     const pricing = priceModule.calculate(gallonsRequested);
 

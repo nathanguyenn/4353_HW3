@@ -13,10 +13,13 @@ connection.connect(function (err) {
   }
 
   console.log("Connected to the MySQL server.");
-  connection.query("SELECT * FROM customers", function (err, result, fields) {
-    if (err) throw err;
-    console.log(result);
-  });
+  connection.query(
+    "SELECT * FROM customer_info",
+    function (err, result, fields) {
+      if (err) throw err;
+      console.log(result);
+    }
+  );
   // connection.query("SELECT * FROM fuelQuotes", function (err, result, fields) {
   //   if (err) throw err;
   //   console.log(result);
