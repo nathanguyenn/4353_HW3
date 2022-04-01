@@ -8,24 +8,24 @@ const db = require("./database");
 db.query = util.promisify(db.query);
 
 class fuelQuoteService {
-  constructor(datafile) {
-    this.datafile = datafile;
-  }
-  /**
-   * Get all feedback items
-   */
-  async getList() {
-    const data = await this.getData();
-    return data;
-  }
-  /**
-   * Fetches feedback data from the JSON file provided to the constructor
-   */
-  async getData() {
-    const data = await readFile(this.datafile, "utf8");
-    if (!data) return [];
-    return JSON.parse(data);
-  }
+  // constructor(datafile) {
+  //   //this.datafile = datafile;
+  // }
+  // /**
+  //  * Get all feedback items
+  //  */
+  // async getList() {
+  //   const data = await this.getData();
+  //   return data;
+  // }
+  // /**
+  //  * Fetches feedback data from the JSON file provided to the constructor
+  //  */
+  // async getData() {
+  //   const data = await readFile(this.datafile, "utf8");
+  //   if (!data) return [];
+  //   return JSON.parse(data);
+  // }
 
   async addEntry(user, gallonsRequested, address, deliveryDate) {
     const state_PLACEHOLDER = "TX";

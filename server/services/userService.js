@@ -10,27 +10,27 @@ const db = require("./database");
 db.query = util.promisify(db.query);
 
 class userService {
-  constructor(datafile) {
-    this.datafile = datafile;
-  }
-  /**
-   * Get all feedback items
-   */
-  async getList() {
-    db.query("SELECT * FROM customers", function (err, result) {
-      if (err) throw err;
+  // constructor(datafile) {
+  //   //this.datafile = datafile;
+  // }
+  // /**
+  //  * Get all feedback items
+  //  */
+  // async getList() {
+  //   db.query("SELECT * FROM customers", function (err, result) {
+  //     if (err) throw err;
 
-      return result;
-    });
-  }
-  /**
-   * Fetches feedback data from the JSON file provided to the constructor
-   */
-  async getData() {
-    const data = await readFile(this.datafile, "utf8");
-    if (!data) return [];
-    return JSON.parse(data);
-  }
+  //     return result;
+  //   });
+  // }
+  // /**
+  //  * Fetches feedback data from the JSON file provided to the constructor
+  //  */
+  // async getData() {
+  //   const data = await readFile(this.datafile, "utf8");
+  //   if (!data) return [];
+  //   return JSON.parse(data);
+  // }
 
   async modifyEntry(email, name, street, password, city, state, zip) {
     //const hold = await this.getList();
@@ -46,12 +46,18 @@ class userService {
         if (result) {
           login_email = email;
           let info = [email, name, street, city, state, zip];
+          // sql =
+          //   "INSERT INTO customer_info (username, name, street, city, state, zip) VALUES (?) ON DUPLICATE KEY UPDATE username = VALUES(username), name = VALUES(name), street = VALUES(street), city = VALUES(city), state = VALUES(state), zip = VALUES(zip)";
           sql =
-            "INSERT INTO customer_info (username, name, street, city, state, zip) VALUES (?) ON DUPLICATE KEY UPDATE username = VALUES(username), name = VALUES(name), street = VALUES(street), city = VALUES(city), state = VALUES(state), zip = VALUES(zip)";
-          db.query(sql, [info], function (err, result, fields) {
-            if (err) throw err;
-            console.log(result);
-          });
+            "INSERT INTO customer_info (username, name, street, city, state, zip) VALUES (?) ON DUPLICATE KEY UPDATE username = ?, name = ?, street = ?, city = ?, state =?, zip =?";
+          db.query(
+            sql,
+            [info, email, name, street, city, state, zip],
+            function (err, result, fields) {
+              if (err) throw err;
+              console.log(result);
+            }
+          );
         }
       }
     );

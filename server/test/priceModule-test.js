@@ -25,7 +25,7 @@ describe("Price Module Tests", function () {
         customerPricePerGallon,
         totalPrice,
         profit,
-      } = PriceModule.calculate(input);
+      } = priceModule.calculate(input);
       const result = [
         internalPricePerGallon,
         internalCost,
@@ -33,6 +33,7 @@ describe("Price Module Tests", function () {
         totalPrice,
         profit,
       ];
+      console.log("testing result" + result);
       expect(result).to.eql(expected);
     });
   });
