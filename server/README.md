@@ -11,9 +11,7 @@ After you have confirmed those, go to server.js file in terminal, type "npm serv
 we uses different ways to connect, validate and establish our data. Since we havent worked on the price module, I will show you how 
 to demonstrate our backend is working. 
 
-The backend dummy value is inside the data/users.json file. If you launch on localhost and complete your user profile, you WILL see your data
-inside the users.json file. 
-Another way to know is when you either log in or create a new account, after you have done that, go to the user icon in the top right
-there is a feild to show that your current logged in username is displayed.
+Since, we are no longer using JSON file. We created a SQL database through MySQL Workbench 8.0 CE. Through this program, we were able to create our database and all the tables needed to fill in our information through the front end. In our report we included snippets of our database populated with customer information. Including the encryption of the password for each customer. For each data being filled in by our clients, each data populates to their specific columns within the tables we created. 
 
 We also uses Mocha, Chai, and Supertest to create unit tests and do the code coverage report. 
+We use Bcrypt to create encryption for our passwords.
