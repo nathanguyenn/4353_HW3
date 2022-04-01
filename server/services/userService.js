@@ -51,36 +51,37 @@ class userService {
           //   if (err) throw err;
           // });
           login_email = email;
-          db.query(
-            "SELECT * FROM customer_info WHERE username = ?",
-            login_email,
-            function (err, result) {
-              if (err) throw err;
-              if (result) {
-                for (var i = 0; i < result.length; i++) {
-                  console.log(result[i].username);
-                  if (login_email === result[i].username) {
-                    sql =
-                      "UPDATE customer_info SET name = ?, street = ?, city = ?, state = ?, zip = ? WHERE username = ?";
-                    db.query(sql, [info2], function (err, result) {
-                      if (err) throw err;
-                    });
-                  } else {
-                    sql =
-                      "INSERT INTO customer_info (username, name, street, city, state, zip) VALUES (?)";
-                    db.query(sql, [info], function (err, result) {
-                      if (err) throw err;
-                    });
-                  }
-                }
-              }
-            }
-          );
-          // sql =
-          //   "INSERT INTO customer_info (username, name, street, city, state, zip) VALUES (?)";
-          // db.query(sql, [info], function (err, result) {
-          //   if (err) throw err;
-          // });
+
+          // db.query(
+          //   "SELECT * FROM customer_info WHERE username = ?",
+          //   login_email,
+          //   function (err, result) {
+          //     if (err) throw err;
+          //     if (result) {
+          //       for (var i = 0; i < result.length; i++) {
+          //         console.log(result[i].username);
+          //         if (login_email === result[i].username) {
+          //           sql =
+          //             "UPDATE customer_info SET name = ?, street = ?, city = ?, state = ?, zip = ? WHERE username = ?";
+          //           db.query(sql, [info2], function (err, result) {
+          //             if (err) throw err;
+          //           });
+          //         } else {
+          //           sql =
+          //             "INSERT INTO customer_info (username, name, street, city, state, zip) VALUES (?)";
+          //           db.query(sql, [info], function (err, result) {
+          //             if (err) throw err;
+          //           });
+          //         }
+          //       }
+          //     }
+          //   }
+          // );
+          sql =
+            "INSERT INTO customer_info (username, name, street, city, state, zip) VALUES (?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE name = VALUES(name), street = VALUES(street), city = VALUES(city), state = VALUES(state), zip = VALUES(zip)";
+          db.query(sql, [info], function (err, result) {
+            if (err) throw err;
+          });
           // } else {
           //   sql =
           //     "INSERT INTO customer_info (username, name, street, city, state, zip) VALUES (?)";

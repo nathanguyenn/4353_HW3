@@ -254,7 +254,6 @@ let current_user = "";
                   state: result[0].state,
                   zip: result[0].zip,
                 };
-                console.log(current_user);
                 res.redirect("fuelQuoteForm");
               } else {
                 console.log("result not found");
