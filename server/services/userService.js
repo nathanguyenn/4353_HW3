@@ -38,6 +38,7 @@ class userService {
     var sql = "";
     let info2 = [name, street, city, state, zip, email];
     let info = [email, name, street, city, state, zip];
+    let login_email = "";
     db.query(
       "SELECT * FROM customers WHERE email = ?",
       email,
@@ -49,11 +50,37 @@ class userService {
           // db.query(sql, [info2], function (err, result) {
           //   if (err) throw err;
           // });
-          sql =
-            "INSERT INTO customer_info (username, name, street, city, state, zip) VALUES (?)";
-          db.query(sql, [info], function (err, result) {
-            if (err) throw err;
-          });
+          login_email = email;
+          db.query(
+            "SELECT * FROM customer_info WHERE username = ?",
+            login_email,
+            function (err, result) {
+              if (err) throw err;
+              if (result) {
+                for (var i = 0; i < result.length; i++) {
+                  console.log(result[i].username);
+                  if (login_email === result[i].username) {
+                    sql =
+                      "UPDATE customer_info SET name = ?, street = ?, city = ?, state = ?, zip = ? WHERE username = ?";
+                    db.query(sql, [info2], function (err, result) {
+                      if (err) throw err;
+                    });
+                  } else {
+                    sql =
+                      "INSERT INTO customer_info (username, name, street, city, state, zip) VALUES (?)";
+                    db.query(sql, [info], function (err, result) {
+                      if (err) throw err;
+                    });
+                  }
+                }
+              }
+            }
+          );
+          // sql =
+          //   "INSERT INTO customer_info (username, name, street, city, state, zip) VALUES (?)";
+          // db.query(sql, [info], function (err, result) {
+          //   if (err) throw err;
+          // });
           // } else {
           //   sql =
           //     "INSERT INTO customer_info (username, name, street, city, state, zip) VALUES (?)";
