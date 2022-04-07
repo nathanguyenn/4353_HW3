@@ -17,11 +17,12 @@ app.set("views", path.join(__dirname, "./client"));
 const userService = require("./services/userService");
 const fuelQuoteService = require("./services/fuelQuoteService");
 const { render } = require("ejs");
+const priceModule = require("./services/priceModule");
 
 const UserService = new userService("./data/users.json");
 const FuelQuoteService = new fuelQuoteService("./data/fuelQuotes.json");
 db.query = util.promisify(db.query);
-
+let hist_factor = false;
 let current_user = "";
 {
   app.use(bodyParser.json());
@@ -35,18 +36,39 @@ let current_user = "";
   app.use(express.static(path.join(__dirname, "./client")));
 }
 
+History_User = (email) => {
+  return new Promise((resolve, reject) => {
+    db.query(
+      "SELECT * FROM fuelQuotes WHERE user = ? ",
+      [email],
+      (error, elements) => {
+        if (error) {
+          throw error;
+        }
+        //console.log(elements);
+        return resolve(elements);
+      }
+    );
+  });
+};
+
 // check if server works
 {
-  app.get("/", (req, res) => {
+  app.get("/", async (req, res) => {
     // db.query("SELECT * FROM fuelQuotes", function (err, result) {
     //   if (err) throw err;
     //   console.log(result[0].user);
     // });
-    res.render("index");
+    try {
+      //const resultElements = await SelectAllElements();
+      //console.log(resultElements);
+      res.render("index");
+    } catch (e) {
+      console.log(e);
+    }
   });
 
   app.post("/", async (req, res) => {
-    //const user_data = await UserService.getList();
     const email = req.body.uname;
     const password = req.body.psw;
     let login_email = "";
@@ -64,6 +86,7 @@ let current_user = "";
             function (err, result) {
               if (err) throw err;
               if (result) {
+                in_state = result[0].state == "TX" ? true : false;
                 current_user = {
                   email: result[0].username,
                   name: result[0].name,
@@ -71,8 +94,8 @@ let current_user = "";
                   city: result[0].city,
                   state: result[0].state,
                   zip: result[0].zip,
+                  in_state: in_state,
                 };
-                console.log(current_user);
                 res.redirect("fuelQuoteForm");
               } else {
                 console.log("result not found");
@@ -87,37 +110,67 @@ let current_user = "";
   });
 
   app.post("/fuelQuoteForm", async (req, res) => {
-    console.log("going to fuelquoteform with nodejs - post");
-    const gallonsRequested = req.body.galReq;
-    const address = req.body.delivAdd;
-    const deliveryDate = req.body.delivDate;
-    let result = await FuelQuoteService.addEntry(
-      current_user.email,
-      gallonsRequested,
-      address,
-      deliveryDate
-    );
+    if (req.body.getPrice) {
+      console.log("INSIDE GET PRICE, hist_factor is " + hist_factor);
+      const gallonsRequested = req.body.galReq;
+      const address = req.body.delivAdd;
+      const deliveryDate = req.body.delivDate;
+      let result = priceModule.calculate(
+        gallonsRequested,
+        current_user.in_state,
+        hist_factor
+      );
 
-    let customerPricePerGallon = parseFloat(
-      result.customerPricePerGallon
-    ).toFixed(2);
-    //let customerPricePerGallon = result.customerPricePerGallon;
-    let totalPrice = parseFloat(result.totalPrice).toFixed(2);
-    //let totalPrice = result.totalPrice;
-    res.render("fuelQuoteForm", {
-      gallonsRequested,
-      current_user,
-      customerPricePerGallon,
-      totalPrice,
-      deliveryDate,
-    });
+      let customerPricePerGallon = parseFloat(
+        result.customerPricePerGallon
+      ).toFixed(2);
+
+      let totalPrice = parseFloat(result.totalPrice).toFixed(2);
+      res.render("fuelQuoteForm", {
+        gallonsRequested,
+        current_user,
+        customerPricePerGallon,
+        totalPrice,
+        deliveryDate,
+      });
+    } else if (req.body.submit) {
+      console.log("INSIDE SUBMIT");
+      const gallonsRequested = req.body.galReq;
+      const address = req.body.delivAdd;
+      const deliveryDate = req.body.delivDate;
+      let result = await FuelQuoteService.addEntry(
+        hist_factor,
+        current_user.in_state,
+        current_user.email,
+        gallonsRequested,
+        address,
+        deliveryDate
+      );
+
+      let customerPricePerGallon = parseFloat(
+        result.customerPricePerGallon
+      ).toFixed(2);
+
+      let totalPrice = parseFloat(result.totalPrice).toFixed(2);
+
+      //let totalPrice = result.totalPrice;
+      // res.render("fuelQuoteForm", {
+      //   gallonsRequested,
+      //   current_user,
+      //   customerPricePerGallon,
+      //   totalPrice,
+      //   deliveryDate,
+      // });
+      res.redirect("history");
+    }
     //res.redirect("history");
   });
 
-  app.get("/fuelQuoteForm", (req, res) => {
-    console.log("going to fuelquoteform with nodejs - get");
-    console.log("current user email is - " + current_user.email);
-    console.log(current_user.street);
+  app.get("/fuelQuoteForm", async (req, res) => {
+    let hist = await History_User(current_user.email);
+    if (hist) {
+      hist_factor = true;
+    }
     let customerPricePerGallon = parseFloat(0).toFixed(2);
     let totalPrice = parseFloat(0).toFixed(2);
     const deliveryDate = "0000-00-00";
@@ -143,7 +196,6 @@ let current_user = "";
     const password = req.body.psw;
     const encryptedPassword = await bcrypt.hash(password, saltRounds);
     let info = [email, encryptedPassword];
-    //current_user = { email, password };
     let string = encodeURIComponent(email + "|" + password);
     var sql = "INSERT INTO customers (email, password) VALUES (?)";
     db.query(sql, [info], function (err, result) {
@@ -153,7 +205,6 @@ let current_user = "";
   });
 
   app.get("/history", async (req, res) => {
-    console.log("going to history with nodejs - get");
     db.query(
       "SELECT * FROM fuelQuotes WHERE user = ?",
       current_user.email,
@@ -246,6 +297,7 @@ let current_user = "";
             function (err, result) {
               if (err) throw err;
               if (result) {
+                let in_state = result[0].state == "TX" ? true : false;
                 current_user = {
                   email: result[0].username,
                   name: result[0].name,
@@ -253,6 +305,7 @@ let current_user = "";
                   city: result[0].city,
                   state: result[0].state,
                   zip: result[0].zip,
+                  in_state: in_state,
                 };
                 res.redirect("fuelQuoteForm");
               } else {

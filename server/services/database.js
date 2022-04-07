@@ -8,22 +8,7 @@ let connection = mysql.createConnection({
 });
 
 connection.connect(function (err) {
-  // if (err) {
-  //   return console.error("error: " + err.message);
-  // }
   if (err) throw err;
-  // console.log("Connected to the MySQL server.");
-  // connection.query(
-  //   "SELECT * FROM customer_info",
-  //   function (err, result, fields) {
-  //     if (err) throw err;
-  //     console.log(result);
-  //   }
-  // );
-  // connection.query("SELECT * FROM fuelQuotes", function (err, result, fields) {
-  //   if (err) throw err;
-  //   console.log(result);
-  // });
 });
 
 module.exports = connection;

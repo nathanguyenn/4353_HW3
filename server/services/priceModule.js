@@ -1,5 +1,6 @@
 class priceModule {
   static calculate(gallonsRequested, in_state = false, history = false) {
+    console.log("instate : " + in_state + " - history: " + history);
     const company_profit = 0.1;
     const internalPricePerGallon = 1.5;
     let gallon_factor = gallonsRequested > 1000 ? 0.02 : 0.03;
@@ -13,8 +14,10 @@ class priceModule {
     let customerPricePerGallon = internalPricePerGallon + margin;
 
     let totalPrice = customerPricePerGallon * gallonsRequested;
-
+    let profit = internalPricePerGallon * gallonsRequested;
     let price = {
+      profit: profit,
+      gallonsRequested: gallonsRequested,
       internalPricePerGallon: internalPricePerGallon,
       customerPricePerGallon: customerPricePerGallon,
       totalPrice: totalPrice,
