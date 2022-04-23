@@ -76,34 +76,55 @@ History_User = (email) => {
     db.query(
       "SELECT * FROM customers WHERE email = ?",
       email,
-      function (err, result) {
-        if (err) throw err;
-        if (result) {
+      async (err, result) => {
+        console.log("IN FUNCTION LINE 80");
+        if (err)
+          res.render("index", {
+            message: "Username or Password is incorrect. Please try again.",
+          });
+        if (result && (await bcrypt.compare(password, result[0].password))) {
           login_email = email;
           db.query(
             "SELECT * FROM customer_info WHERE username = ?",
             login_email,
             function (err, result) {
-              if (err) throw err;
-              if (result) {
-                in_state = result[0].state == "TX" ? true : false;
-                current_user = {
-                  email: result[0].username,
-                  name: result[0].name,
-                  street: result[0].street,
-                  city: result[0].city,
-                  state: result[0].state,
-                  zip: result[0].zip,
-                  in_state: in_state,
-                };
-                res.redirect("fuelQuoteForm");
+              console.log("IN FUNCTION LINE 88");
+              if (err) {
+                console.log("IN ERR LINE 90");
+                res.render("index");
               } else {
-                console.log("result not found");
+                try {
+                  if (result) {
+                    console.log("IN RESULT LINE 93");
+                    in_state = result[0].state == "TX" ? true : false;
+                    current_user = {
+                      email: result[0].username,
+                      name: result[0].name,
+                      street: result[0].street,
+                      city: result[0].city,
+                      state: result[0].state,
+                      zip: result[0].zip,
+                      in_state: in_state,
+                    };
+                    res.redirect("fuelQuoteForm");
+                  } else {
+                    console.log("IN ELSE LINE 103");
+                    console.log("result not found");
+                  }
+                } catch (error) {
+                  res.render("index", {
+                    message:
+                      "Username or Password is incorrect. Please try again.",
+                  });
+                }
               }
             }
           );
         } else {
-          res.render("index");
+          console.log("IN ELSE LINE 107");
+          res.render("index", {
+            message: "Username or Password is incorrect. Please try again.",
+          });
         }
       }
     );
