@@ -216,17 +216,23 @@ History_User = (email) => {
 
   app.post("/signup", async (req, res) => {
     console.log("going to signup with nodejs - post");
-
     const email = req.body.email;
     const password = req.body.psw;
-    const encryptedPassword = await bcrypt.hash(password, saltRounds);
-    let info = [email, encryptedPassword];
-    let string = encodeURIComponent(email + "|" + password);
-    var sql = "INSERT INTO customers (email, password) VALUES (?)";
-    db.query(sql, [info], function (err, result) {
-      if (err) throw err;
-    });
-    res.redirect("profile?valid=" + string);
+    const matchingpass = req.body.pswA;
+    if (password != matchingpass) {
+      res.render("signup", {
+        message: "Password did not match, please try again! \n",
+      });
+    } else {
+      const encryptedPassword = await bcrypt.hash(password, saltRounds);
+      let info = [email, encryptedPassword];
+      let string = encodeURIComponent(email + "|" + password);
+      var sql = "INSERT INTO customers (email, password) VALUES (?)";
+      db.query(sql, [info], function (err, result) {
+        if (err) throw err;
+      });
+      res.redirect("profile?valid=" + string);
+    }
   });
 
   app.get("/history", async (req, res) => {
