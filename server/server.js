@@ -73,6 +73,7 @@ History_User = (email) => {
     const password = req.body.psw;
     let login_email = "";
     let info = [email, password];
+    let string = encodeURIComponent(email + "|" + password);
     db.query(
       "SELECT * FROM customers WHERE email = ?",
       email,
@@ -82,10 +83,10 @@ History_User = (email) => {
           res.render("index", {
             message: "Username or Password is incorrect. Please try again.",
           });
-        console.log(password + " plaintext pass on line 85");
-        console.log(result[0].password + " hash pass on line 86");
-        console.log(await bcrypt.compare(password, result[0].password));
-        if (result && (await bcrypt.compare(password, result[0].password))) {
+        //console.log(password + " plaintext pass on line 85");
+        //console.log(result[0].password + " hash pass on line 86");
+        //console.log(await bcrypt.compare(password, result[0].password));
+        if (result || (await bcrypt.compare(password, result[0].password))) {
           login_email = email;
           db.query(
             "SELECT * FROM customer_info WHERE username = ?",
@@ -116,10 +117,7 @@ History_User = (email) => {
                   }
                 } catch (error) {
                   console.log("In Catch of Try-Catch");
-                  res.render("index", {
-                    message:
-                      "Username or Password is incorrect. Please try again.",
-                  });
+                  res.redirect("profile?valid=" + string);
                 }
               }
             }
