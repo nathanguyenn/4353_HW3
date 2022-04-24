@@ -24,8 +24,19 @@
     </div>
 
     <div class="container" style="background-color: #f1f1f1">
-      <button type="button" class="cancelbtn">Cancel</button>
-      <span class="psw">Forgot <a href="#">password?</a></span>
+      <button type="button" class="cancelbtn" onclick="location.href='/'">
+        Cancel
+      </button>
+      <span class="psw" id="forgotPassButton"
+        >Forgot <a href="#" onclick="forgot()">password?</a></span
+      >
     </div>
   </form>
+  <script>
+    function forgot() {
+      let result = alert(
+        "LOL, how did you forget your password? Just make a new account you're not getting that back."
+      );
+    }
+  </script>
 </body>

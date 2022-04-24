@@ -8,6 +8,12 @@
 html {
   scroll-behavior: smooth;
 }
+.forgotPassButton:hover {
+  cursor: pointer;
+}
+.forgotPassButton {
+  color: #2762c0;
+}
 body {
   background-image: url("../pictures/4357_Website_Background.jpg");
   background-repeat: no-repeat;

@@ -72,7 +72,6 @@ History_User = (email) => {
     const email = req.body.uname;
     const password = req.body.psw;
     let login_email = "";
-    let info = [email, password];
     let string = encodeURIComponent(email + "|" + password);
     db.query(
       "SELECT * FROM customers WHERE email = ?",
@@ -83,9 +82,6 @@ History_User = (email) => {
           res.render("index", {
             message: "Username or Password is incorrect. Please try again.",
           });
-        //console.log(password + " plaintext pass on line 85");
-        //console.log(result[0].password + " hash pass on line 86");
-        //console.log(await bcrypt.compare(password, result[0].password));
         if (result || (await bcrypt.compare(password, result[0].password))) {
           login_email = email;
           db.query(
@@ -175,18 +171,8 @@ History_User = (email) => {
       ).toFixed(2);
 
       let totalPrice = parseFloat(result.totalPrice).toFixed(2);
-
-      //let totalPrice = result.totalPrice;
-      // res.render("fuelQuoteForm", {
-      //   gallonsRequested,
-      //   current_user,
-      //   customerPricePerGallon,
-      //   totalPrice,
-      //   deliveryDate,
-      // });
       res.redirect("history");
     }
-    //res.redirect("history");
   });
 
   app.get("/fuelQuoteForm", async (req, res) => {
@@ -214,23 +200,39 @@ History_User = (email) => {
 
   app.post("/signup", async (req, res) => {
     console.log("going to signup with nodejs - post");
+
     const email = req.body.email;
     const password = req.body.psw;
     const matchingpass = req.body.pswA;
-    if (password != matchingpass) {
-      res.render("signup", {
-        message: "Password did not match, please try again! \n",
-      });
-    } else {
-      const encryptedPassword = await bcrypt.hash(password, saltRounds);
-      let info = [email, encryptedPassword];
-      let string = encodeURIComponent(email + "|" + password);
-      var sql = "INSERT INTO customers (email, password) VALUES (?)";
-      db.query(sql, [info], function (err, result) {
+    db.query(
+      "SELECT * FROM customers WHERE email = ?",
+      email,
+      async (err, result) => {
         if (err) throw err;
-      });
-      res.redirect("profile?valid=" + string);
-    }
+
+        if (result) {
+          res.render("signup", {
+            e_message:
+              'Email is already in use. To login please click cancel and then login. If you forgot your password, please click "Forgot password" \n',
+          });
+        } else {
+          if (password != matchingpass) {
+            res.render("signup", {
+              message: "Password did not match, please try again! \n",
+            });
+          } else {
+            const encryptedPassword = await bcrypt.hash(password, saltRounds);
+            let info = [email, encryptedPassword];
+            let string = encodeURIComponent(email + "|" + password);
+            var sql = "INSERT INTO customers (email, password) VALUES (?)";
+            db.query(sql, [info], function (err, result) {
+              if (err) throw err;
+            });
+            res.redirect("profile?valid=" + string);
+          }
+        }
+      }
+    );
   });
 
   app.get("/history", async (req, res) => {
@@ -311,8 +313,6 @@ History_User = (email) => {
       state,
       zip
     );
-    // await UserService.addEntry(email, name, street, password,
-    //                            city, state, zip);
     db.query(
       "SELECT * FROM customers WHERE email = ?",
       email,
