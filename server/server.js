@@ -214,7 +214,7 @@ History_User = (email) => {
       async (err, result) => {
         if (err) throw err;
 
-        if (result) {
+        if (result != "") {
           res.render("signup", {
             e_message:
               'Email is already in use. To login please click cancel and then login. If you forgot your password, please click "Forgot password" \n',
