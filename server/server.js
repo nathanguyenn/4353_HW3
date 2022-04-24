@@ -78,11 +78,20 @@ History_User = (email) => {
       email,
       async (err, result) => {
         console.log("IN FUNCTION LINE 80");
-        if (err)
+        if (err) {
           res.render("index", {
             message: "Username or Password is incorrect. Please try again.",
           });
-        if (result || (await bcrypt.compare(password, result[0].password))) {
+        }
+        if (
+          result == "" ||
+          !(await bcrypt.compare(password, result[0].password))
+        ) {
+          res.render("index", {
+            message: "Username or Password is incorrect. Please try again.",
+          });
+        } else {
+          console.log("IN ELSE LINE 107");
           login_email = email;
           db.query(
             "SELECT * FROM customer_info WHERE username = ?",
@@ -118,11 +127,6 @@ History_User = (email) => {
               }
             }
           );
-        } else {
-          console.log("IN ELSE LINE 107");
-          res.render("index", {
-            message: "Username or Password is incorrect. Please try again.",
-          });
         }
       }
     );
