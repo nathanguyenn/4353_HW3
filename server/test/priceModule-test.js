@@ -7,8 +7,8 @@ const priceModule = require("../services/priceModule");
 
 const sample = [
   {
-    input: 5.0,
-    expected: [1.99, 9.95, 5.0, 25.0, 15.05],
+    input: 1500.0,
+    expected: [2250.0, 1500.0, 1.5, 1.74, 2610],
   },
 ];
 
@@ -20,18 +20,18 @@ describe("Price Module Tests", function () {
   sample.forEach(({ input, expected }) => {
     it(`${input} should be ${expected}`, function () {
       const {
+        profit,
+        gallonsRequested,
         internalPricePerGallon,
-        internalCost,
         customerPricePerGallon,
         totalPrice,
-        profit,
-      } = priceModule.calculate(input);
+      } = priceModule.calculate(input, false, false);
       const result = [
+        profit,
+        gallonsRequested,
         internalPricePerGallon,
-        internalCost,
         customerPricePerGallon,
         totalPrice,
-        profit,
       ];
       console.log("testing result" + result);
       expect(result).to.eql(expected);
