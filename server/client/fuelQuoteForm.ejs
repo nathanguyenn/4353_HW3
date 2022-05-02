@@ -13,7 +13,7 @@
     
         <label for="galReq"><b>Gallons Requested</b></label>
         <br><br>
-        <input type="number" step="0.01" value="<%=gallonsRequested %>" name="galReq" required>
+        <input type="number" step="0.01" value="<%=gallonsRequested %>" name="galReq" min="0" required>
         <br><br>
         <label for="delivAdd"><b>Delivery Address</b></label>
         <input type="text" value="<%= current_user.street + ", " + current_user.city +", " +current_user.state+ " " +current_user.zip%>"
