@@ -1,3 +1,4 @@
+
 <head>
     <title>Fuel Quote Form</title>
     <link rel="stylesheet" href="./css/signup.css">
@@ -21,7 +22,7 @@
 
         <label for="delivDate"><b>Delivery Date</b></label>
         <br> <br> 
-        <input type ="date" value="<%=deliveryDate%>" name="delivDate" required>
+        <input type ="date" id="datefield" value="<%=deliveryDate%> "  name="delivDate" min="2022-02-05" required>
         <br>  <br> 
         <p>If address is incorrect please fix on <a href="/profile" style="color:dodgerblue">User Profile</a>.</p>
 
@@ -39,3 +40,23 @@
         </div>
     </form>
 </body>
+<script>
+    var today = new Date();
+var dd = today.getDate();
+var mm = today.getMonth() + 1; //January is 0!
+var yyyy = today.getFullYear();
+
+if (dd < 10) {
+   dd = '0' + dd;
+}
+
+if (mm < 10) {
+   mm = '0' + mm;
+} 
+    
+today = yyyy + '-' + mm + '-' + dd;
+console.log(today)
+document.getElementById("datefield").setAttribute("min", today);
+
+
+</script>
